@@ -1,0 +1,58 @@
+extends layout
+
+block content
+    h4
+        a(href='/') Back
+
+    | Edit information shown on the map here
+    br
+    br
+    br
+
+    h3 New Entry
+    form#formAddPoi(name="add", method="post", action="/add")
+        table(style="border:1px solid black")
+            tr
+                th Name
+                th Website
+                th Email
+                th Latitude
+                th Longitude
+            tr
+                td
+                    input#inputName(type="text", name="name")
+                td
+                    input#inputWebsite(type="text", name="website")
+                td
+                    input#inputEmail(type="text", name="email")
+                td
+                    input#inputLat(type="text", name="lat")
+                td
+                    input#inputLng(type="text", name="lng")
+                td
+                    button#btnSubmitAdd(type="submit") Add
+
+    br
+    br
+    br
+
+    h3 Existing Entries
+    form#formRemovePoi(name="remove", method="post", action="/remove")
+        table(style='border:1px solid black')
+            tr
+                th Name
+                th Website
+                th Email
+                th Latitude
+                th Longitude
+                th Remove?
+            each poi, i in poi_list
+                tr(style='border:1px solid black')
+                    td(style="padding:3px") #{poi.name}
+                    td(style="padding:3px") #{poi.website}
+                    td(style="padding:3px") #{poi.email}
+                    td(style="padding:3px") #{poi.lat}
+                    td(style="padding:3px") #{poi.lng}
+                    td(style="padding:3px")
+                        input#inputRemove(type="radio", name="remove", value="#{poi.name}")
+        button#btnSubmitRemove(type="submit") Remove

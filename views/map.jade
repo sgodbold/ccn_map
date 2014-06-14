@@ -1,83 +1,98 @@
 extends layout
 
 block content_head
-	script(src='http://www.mapquestapi.com/sdk/js/v7.0.s/mqa.toolkit.js?key=Fmjtd%7Cluur2g6znu%2C2l%3Do5-9a8wuw')
+    script(src='http://www.mapquestapi.com/sdk/js/v7.0.s/mqa.toolkit.js?key=Fmjtd%7Cluur2g6znu%2C2l%3Do5-9a8wuw')
  
-	script(type='text/javascript').
-		//An example of using the MQA.EventUtil to hook into the window load event and execute defined function passed
-		//in as the last parameter. You could alternatively create a plain function here and have it executed whenever
-		//you like (e.g. <body onload="yourfunction">).
-		MQA.EventUtil.observe(window, 'load', function() {
-			//Create an object for options.
-			var options={
-				elt:document.getElementById('map'), 				//ID of the element on the page where you want the map.
-				zoom:3,																		//Initial zoom level of the map.
-				latLng:{lat:0, lng:0},		//Center of the map in latitude/longitude.
-				mtype:'map',																//Map type (map).
-				bestFitMargin:0,														//Margin offset from the map viewport when applying a best fit on shapes.
-				zoomOnDoubleClick:true											//zoom in when double clicking on map
-			}
+    script(type='text/javascript').
+        //An example of using the MQA.EventUtil to hook into the window load event and execute defined function passed
+        //in as the last parameter. You could alternatively create a plain function here and have it executed whenever
+        //you like (e.g. <body onload="yourfunction">).
+        MQA.EventUtil.observe(window, 'load', function() {
+            //Create an object for options.
+            var options={
+                elt:document.getElementById('map'), 				//ID of the element on the page where you want the map.
+                zoom:3,																		//Initial zoom level of the map.
+                latLng:{lat:0, lng:0},		//Center of the map in latitude/longitude.
+                mtype:'map',																//Map type (map).
+                bestFitMargin:0,														//Margin offset from the map viewport when applying a best fit on shapes.
+                zoomOnDoubleClick:true											//zoom in when double clicking on map
+            }
 
-			//Construct an instance of MQA.TileMap with the options object.
-			window.map = new MQA.TileMap(options)
+            //Construct an instance of MQA.TileMap with the options object.
+            window.map = new MQA.TileMap(options)
 
-			//Create all POI's from the local 'mapcollection' database.
-			var local_poi = !{JSON.stringify(poi)}
-			console.log(local_poi[0])
+            //Create all POI's from db values. Value passed in by the router.
+            var local_poi = !{JSON.stringify(poi)}
+            console.log(local_poi[0])
 
-			//Create a POI for every db entry
-			for (var i=0; i < local_poi.length; i++){
-				var point = local_poi[i];
+            //Create a POI for every db entry
+            for (var i=0; i < local_poi.length; i++){
+                var point = local_poi[i];
 
-				//Using the MQA.Poi constructor
-				var info=new MQA.Poi({lat:point.lat, lng:point.lng});
+                // Html of POI box when mouse hovers.
+                var html =
+                    [
+                        '<div style="width:200px; height:100px">',
+                            '<h3><b>' + point.name + '</b></h3>',
+                            '<hr>',
+                            '<ul style="list-style-type:none">',
+                                '<li>Website: <a href="' + point.website + '">' + point.website + '</a></li>',
+                                '<li>Email: ' + point.email + '</li>',
+                            '</ul>',
+                        '</div>'
+                    ].join('\n');
 
-				//Sets the rollover content of the POI.
-				info.setRolloverContent(point.name);
+                //Using the MQA.Poi constructor
+                var info=new MQA.Poi({lat:point.lat, lng:point.lng});
 
-				//Sets the InfoWindow contents for the POI. By default when the poi receives a mouseclick
-				//event, the InfoWindow will be displayed with the HTML passed in to MQA.POI.setInfoContentHTML method.
-				info.setInfoContentHTML('<a href="' + point.website + '">' + point.name + '</a>');
+                //Sets the rollover content of the POI.
+                info.setRolloverContent(html);
 
-				//This will add the POI to the map in the map's default shape collection.
-				map.addShape(info);
-			}
+                //Sets the InfoWindow contents for the POI. By default when the poi receives a mouseclick
+                //event, the InfoWindow will be displayed with the HTML passed in to MQA.POI.setInfoContentHTML method.
+                info.setInfoContentHTML(html);
 
-			MQA.withModule('largezoom','traffictoggle','viewoptions','geolocationcontrol','insetmapcontrol','mousewheel', function() {
-				map.addControl(
-					new MQA.LargeZoom(),
-					new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT, new MQA.Size(5,5))
-				)
+                //This will add the POI to the map in the map's default shape collection.
+                map.addShape(info);
+            }
 
-				map.addControl(new MQA.TrafficToggle())
+            MQA.withModule('largezoom','traffictoggle','viewoptions','geolocationcontrol','insetmapcontrol','mousewheel', function() {
+                map.addControl(
+                    new MQA.LargeZoom(),
+                    new MQA.MapCornerPlacement(MQA.MapCorner.TOP_LEFT, new MQA.Size(5,5))
+                )
 
-				map.addControl(new MQA.ViewOptions())
+                map.addControl(new MQA.TrafficToggle())
 
-				map.addControl(
-					new MQA.GeolocationControl(),
-					new MQA.MapCornerPlacement(MQA.MapCorner.TOP_RIGHT, new MQA.Size(10,50))
-				)
+                map.addControl(new MQA.ViewOptions())
 
-				//Inset Map Control options.
-				var options={
-					size:{width:150, height:125},
-					zoom:3,
-					mapType:'map',
-					minimized:true
-				}
+                map.addControl(
+                    new MQA.GeolocationControl(),
+                    new MQA.MapCornerPlacement(MQA.MapCorner.TOP_RIGHT, new MQA.Size(10,50))
+                )
 
-				map.addControl(
-					new MQA.InsetMapControl(options),
-					new MQA.MapCornerPlacement(MQA.MapCorner.BOTTOM_RIGHT)
-				)
+                //Inset Map Control options.
+                var options={
+                    size:{width:150, height:125},
+                    zoom:3,
+                    mapType:'map',
+                    minimized:true
+                }
 
-				map.enableMouseWheelZoom()
-			})
-		})
+                map.addControl(
+                    new MQA.InsetMapControl(options),
+                    new MQA.MapCornerPlacement(MQA.MapCorner.BOTTOM_RIGHT)
+                )
+
+                map.enableMouseWheelZoom()
+            })
+        })
 
 
 block content
-	h1= title
-	p Welcome to #{title}
+    h1= title
 
-	#map(style='width:1500px; height:700px;')
+    h4
+        a(href='/edit') Edit Map
+
+    #map(style='width:1500px; height:700px;')
