@@ -1,0 +1,34 @@
+extends layout
+
+block content
+    h4
+        a(href='/edit') Back
+
+    | Edit a specific map point here
+    br
+    br
+    br
+
+    h3 Edit Entry
+    form#formEditPoi(name="edit", method="post", action="/update")
+        input#inputId(type="hidden", name="id", value="#{edit_id}")
+        table(style="border:1px solid black")
+            tr
+                th Name
+                th Website
+                th Email
+                th Latitude
+                th Longitude
+            tr
+                td
+                    input#inputName(type="text", name="name", value="#{edit_entry.name}")
+                td
+                    input#inputName(type="text", name="website", value="#{edit_entry.website}")
+                td
+                    input#inputName(type="text", name="email", value="#{edit_entry.email}")
+                td
+                    input#inputName(type="text", name="lat", value="#{edit_entry.lat}")
+                td
+                    input#inputName(type="text", name="lng", value="#{edit_entry.lng}")
+                td
+                    button#btnSubmitEdit(type="submit") Submit

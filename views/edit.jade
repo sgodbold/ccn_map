@@ -37,7 +37,7 @@ block content
     br
 
     h3 Existing Entries
-    form#formRemovePoi(name="remove", method="post", action="/remove")
+    form#formRemovePoi(name="remove", method="post", action="/change")
         table(style='border:1px solid black')
             tr
                 th Name
@@ -46,6 +46,7 @@ block content
                 th Latitude
                 th Longitude
                 th Remove?
+                th Edit?
             each poi, i in poi_list
                 tr(style='border:1px solid black')
                     td(style="padding:3px") #{poi.name}
@@ -54,5 +55,8 @@ block content
                     td(style="padding:3px") #{poi.lat}
                     td(style="padding:3px") #{poi.lng}
                     td(style="padding:3px")
-                        input#inputRemove(type="radio", name="remove", value="#{poi.name}")
-        button#btnSubmitRemove(type="submit") Remove
+                        input#inputRemove(type="radio", name="remove", value="#{poi._id}")
+                    td(style="padding:3px")
+                        input#inputEdit(type="radio", name="edit", value="#{poi._id}")
+
+        button#btnSubmit(type="submit") Submit
